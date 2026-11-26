@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+  <section class="admin-page-heading">
+    <div><p class="admin-eyebrow">Visão geral</p><h1>Bom dia, administrador</h1><p>Acompanhe os conteúdos e recursos do portal num só lugar.</p></div>
+    <a class="admin-button admin-button-primary" href="/admin/artigos/novo"><i class="bi bi-plus-lg" aria-hidden="true"></i> Criar conteúdo</a>
+  </section>
+
+  <section class="admin-stats-grid" aria-label="Estatísticas de demonstração">
+    {% for stat in stats %}
+      <article class="admin-stat-card">
+        <div class="admin-stat-top"><span>{{ stat.label }}</span><span class="admin-stat-icon tone-{{ stat.tone }}"><i class="bi {{ stat.icon }}" aria-hidden="true"></i></span></div>
+        <strong class="admin-stat-value">{{ stat.value }}</strong>
+        <span class="admin-stat-change"><i class="bi bi-arrow-up-right" aria-hidden="true"></i> {{ stat.change }}</span>
+      </article>
+    {% endfor %}
+  </section>
+
+  <div class="admin-dashboard-grid">
+    <section class="admin-panel admin-recent-panel">
+      <div class="admin-panel-heading"><div><h2>Conteúdos recentes</h2><p>Actividade editorial de exemplo</p></div><a class="admin-text-link" href="/admin/artigos">Ver todos <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Título</th><th>Tipo</th><th>Estado</th><th>Actualizado</th></tr></thead>
+          <tbody>
+            {% for item in recent_content %}
+              <tr>
+                <td><span class="admin-cell-title">{{ item.title }}</span><span class="admin-cell-subtitle">{{ item.category }}</span></td>
+                <td>{{ "Artigo" if loop.index < 3 else "Tutorial" }}</td>
+                <td><span class="admin-status status-{{ item.status|lower|replace(' ', '-') }}">{{ item.status }}</span></td>
+                <td>{{ item.updated }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="admin-panel admin-category-panel">
+      <div class="admin-panel-heading"><div><h2>Categorias</h2><p>Distribuição do conteúdo</p></div><a class="admin-icon-link" href="/admin/categorias" aria-label="Gerir categorias"><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
+      <div class="admin-category-summary">
+        {% for category in categories %}
+          <div class="admin-category-row"><span class="admin-category-dot dot-{{ loop.index }}"></span><span>{{ category.name }}</span><strong>{{ category.count }}</strong></div>
+        {% endfor %}
+      </div>
+      <a class="admin-button admin-button-secondary admin-full-button" href="/admin/categorias">Gerir categorias</a>
+    </section>
+  </div>
+
+  <section class="admin-quick-links">
+    <div><span class="admin-quick-icon"><i class="bi bi-journal-plus" aria-hidden="true"></i></span><span><strong>Publicar um artigo</strong><small>Crie uma notícia ou publicação para o blog.</small></span><a href="/admin/artigos/novo" aria-label="Criar artigo"><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
+    <div><span class="admin-quick-icon quick-icon-green"><i class="bi bi-file-earmark-person" aria-hidden="true"></i></span><span><strong>Adicionar modelo de CV</strong><small>Prepare um novo recurso para download.</small></span><a href="/admin/modelos-cv/novo" aria-label="Adicionar modelo de CV"><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
+  </section>
+{% endblock %}
