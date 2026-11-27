@@ -1,6 +1,6 @@
 # Emprego Angola
 
-Portal editorial de emprego e orientação profissional para Angola, servido por Flask e templates Jinja2. As páginas, vagas e o painel administrativo continuam demonstrativos; existe uma camada de modelos preparada para persistência, ainda sem CRUD. O formulário de contacto encaminha mensagens através do Web3Forms.
+Portal editorial de emprego e orientação profissional para Angola, servido por Flask, SQLAlchemy e templates Jinja2. Artigos, tutoriais, vagas, modelos de CV, categorias e configurações são guardados na base de dados. Só registos publicados aparecem nas páginas públicas. O formulário de contacto encaminha mensagens através do Web3Forms.
 
 ## Estrutura
 
@@ -10,7 +10,9 @@ Portal editorial de emprego e orientação profissional para Angola, servido por
 │   ├── __init__.py          # App factory, configuração e registo das extensões
 │   ├── extensions.py        # SQLAlchemy, Flask-Migrate e Flask-Login
 │   ├── models.py            # Modelos e relacionamentos
-│   ├── admin.py             # Rotas administrativas demonstrativas
+│   ├── admin.py             # CRUD administrativo protegido
+│   ├── auth.py              # Sessão de administrador
+│   ├── site.py              # Configurações públicas
 │   └── routes.py            # Rotas editoriais
 ├── migrations/              # Histórico das migrações da base de dados
 ├── templates/               # HTML renderizado pelo Jinja2
@@ -48,7 +50,7 @@ Instale as dependências no ambiente virtual indicado pelo cPanel:
 pip install -r requirements.txt
 ```
 
-O cPanel gera o `.htaccess` com os caminhos específicos da conta e do ambiente virtual; não copie um `.htaccess` de outra instalação. Defina `DATABASE_URL` nas variáveis de ambiente da aplicação antes de iniciar. Para actualizar a base de dados, execute `flask --app run.py db upgrade` no terminal do cPanel, com o ambiente virtual activo. Reinicie a aplicação no cPanel depois de alterar código ou configuração.
+O cPanel gera o `.htaccess` com os caminhos específicos da conta e do ambiente virtual; não copie um `.htaccess` de outra instalação. Configure `SECRET_KEY` com um valor aleatório longo, `DATABASE_URL` com as credenciais MySQL e `SESSION_COOKIE_SECURE=true` quando o site estiver em HTTPS. Para actualizar a base de dados, execute `flask --app run.py db upgrade` no terminal do cPanel, com o ambiente virtual activo. Crie o primeiro administrador com `flask --app run.py create-admin`; o comando solicita email e palavra-passe (mínimo 12 caracteres). Reinicie a aplicação no cPanel depois de alterar código ou configuração.
 
 ## Base de dados e migrações
 
@@ -65,7 +67,32 @@ $env:FLASK_APP = "run.py"
 flask db upgrade
 ```
 
-Os modelos cobrem contas administrativas e tokens de recuperação (preparação para autenticação, sem fluxo de login), categorias, artigos/notícias/tutoriais, modelos de CV e configurações do site. Categorias relacionam-se com conteúdos e modelos de CV; tokens relacionam-se com a conta administrativa. O painel ainda usa dados mockados: não há CRUD, persistência de conteúdos, upload nem gestão local de mensagens de contacto.
+O painel em `/admin` exige início de sessão. O comando `create-admin` cria a primeira conta; palavras-passe são armazenadas com hash e formulários protegidos por CSRF. O CRUD abrange artigos, tutoriais, vagas, modelos de CV, categorias e configurações. Upload de modelos de CV aceita PDF, DOC, DOCX ou HTML até ao limite total de pedido e guarda os ficheiros em `instance/uploads/cv-templates`; faça backup dessa pasta juntamente com a base de dados. Categorias em uso não podem ser apagadas. Não são inseridos conteúdos de exemplo automaticamente.
+
+Artigos e tutoriais têm páginas de detalhe em `/artigos/<slug>` e `/tutoriais/<slug>`. Vagas publicadas e dentro do prazo, artigos, tutoriais e modelos publicados aparecem nas páginas públicas; rascunhos não são visíveis sem autenticação. O site não inclui um fluxo público de registo nem recuperação de palavra-passe.
+
+## Estado do CRUD
+
+O CRUD administrativo está implementado e as operações foram cobertas por testes automáticos:
+
+- criar, editar e apagar artigos e tutoriais;
+- criar, pesquisar e apagar vagas;
+- criar e apagar categorias, com proteção para categorias associadas a outros registos;
+- enviar, listar, disponibilizar e apagar modelos de CV;
+- guardar e aplicar as configurações do site;
+- validar dados obrigatórios, estados, slugs e URLs;
+- restringir a área administrativa a utilizadores autenticados;
+- mostrar apenas conteúdos publicados nas páginas públicas.
+
+Antes de utilizar o painel em uma instalação nova, aplique as migrações e crie o administrador:
+
+```powershell
+$env:FLASK_APP = "run.py"
+flask db upgrade
+flask create-admin
+```
+
+Acceda ao painel em `/admin/login`.
 
 ## Rotas
 
@@ -76,14 +103,17 @@ Os modelos cobrem contas administrativas e tokens de recuperação (preparação
 | `/vagas` | `main.vagas` | `templates/pages/category.html` |
 | `/contacto` | `main.contacto` | `templates/pages/contact.html` |
 | `/tutoriais` | `main.tutoriais` | `templates/pages/starter-page.html` |
-| `/artigo-exemplo` | `main.artigo_exemplo` | `templates/pages/single-post.html` |
+| `/artigos/<slug>` | `main.article_detail` | `templates/pages/content_detail.html` |
+| `/tutoriais/<slug>` | `main.tutorial_detail` | `templates/pages/content_detail.html` |
 
-A pesquisa de vagas aceita `q` por query string (por exemplo, `/vagas?q=contabilidade`) e mantém o termo no campo de pesquisa. A filtragem do conteúdo demonstrativo é feita no navegador.
+A pesquisa de vagas e artigos aceita `q` por query string (por exemplo, `/vagas?q=contabilidade`) e consulta os registos publicados na base de dados.
 
 ## Testes
 
 ```powershell
-python -m unittest discover -s tests
+py -m unittest discover -s tests -v
 ```
+
+Na validação local, 13 dos 14 testes passam. O teste restante verifica o ponto de entrada Passenger com uma segunda aplicação ligada à base SQLite por omissão; para o passar numa instalação limpa, execute `flask db upgrade` antes da suite. Os testes CRUD, de autenticação, uploads, modelos e rotas públicas passam.
 
 O handler em `legacy/php/contact.php` foi preservado apenas como legado; não é chamado pelas rotas Flask nem utilizado pelo formulário de contacto.

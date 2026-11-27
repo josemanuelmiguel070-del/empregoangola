@@ -3,56 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Consulte exemplos de vagas e conteúdos editoriais sobre emprego e carreira em Angola.">
-  <title>Vagas e notícias | Emprego Angola</title>
+  <meta name="description" content="Vagas e artigos publicados em {{ site_settings.site_name }}.">
+  <title>Vagas e notícias | {{ site_settings.site_name }}</title>
   <link rel="icon" href="/static/img/favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="/static/css/main.css" rel="stylesheet">
-  <link href="/static/css/portal.css" rel="stylesheet">
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet"><link href="/static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet"><link href="/static/css/main.css" rel="stylesheet"><link href="/static/css/portal.css" rel="stylesheet">
 </head>
 <body class="portal-page">
   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
   <header id="header" class="header sticky-top"><div class="container header-inner">
-    <a href="/" class="logo" aria-label="Emprego Angola — página inicial"><span class="logo-mark" aria-hidden="true">EA</span><span class="logo-copy"><strong class="sitename">Emprego Angola</strong><small>Carreira e oportunidades</small></span></a>
-    <nav id="navmenu" class="navmenu" aria-label="Navegação principal"><ul>
-      <li><a href="/">Início</a></li><li><a href="/sobre#modelos">Modelos de CV</a></li><li><a href="#vagas" class="active" aria-current="page">Vagas</a></li><li><a href="#noticias">Notícias</a></li><li><a href="/tutoriais">Tutoriais</a></li><li><a href="#pesquisa">Pesquisa</a></li>
-    </ul></nav>
-    <form class="header-search" action="/vagas" method="get" role="search"><label class="visually-hidden" for="header-query">Pesquisar no portal</label><input id="header-query" name="q" type="search" placeholder="Pesquisar"><button type="submit" aria-label="Pesquisar"><i class="bi bi-search" aria-hidden="true"></i></button></form>
+    <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">EA</span><span class="logo-copy"><strong class="sitename">{{ site_settings.site_name }}</strong><small>{{ site_settings.tagline }}</small></span></a>
+    <nav id="navmenu" class="navmenu" aria-label="Navegação principal"><ul><li><a href="/">Início</a></li><li><a href="/sobre#modelos">Modelos de CV</a></li><li><a href="#vagas" class="active" aria-current="page">Vagas</a></li><li><a href="#noticias">Notícias</a></li><li><a href="/tutoriais">Tutoriais</a></li><li><a href="#pesquisa">Pesquisa</a></li></ul></nav>
+    <form class="header-search" action="/vagas" method="get" role="search"><label class="visually-hidden" for="header-query">Pesquisar no portal</label><input id="header-query" name="q" type="search" value="{{ query }}" placeholder="Pesquisar"><button type="submit" aria-label="Pesquisar"><i class="bi bi-search" aria-hidden="true"></i></button></form>
     <button class="theme-toggle" type="button" aria-label="Activar modo escuro" title="Modo escuro"><i class="bi bi-moon-stars" aria-hidden="true"></i></button>
     <button class="mobile-nav-toggle" type="button" aria-controls="navmenu" aria-expanded="false" aria-label="Abrir menu"><i class="bi bi-list" aria-hidden="true"></i></button>
   </div></header>
   <main id="conteudo" tabindex="-1">
-    <section class="page-intro"><div class="container"><p class="eyebrow">Oportunidades e informação</p><h1>Vagas, notícias e mercado de trabalho</h1><p>Consulte os conteúdos do portal. As publicações abaixo são exemplos de apresentação, não anúncios activos.</p></div></section>
+    <section class="page-intro"><div class="container"><p class="eyebrow">Oportunidades e informação</p><h1>Vagas, notícias e mercado de trabalho</h1><p>Consulte as oportunidades e os artigos publicados no portal.</p></div></section>
     <section id="pesquisa" class="content-section compact-section"><div class="container">
       <form class="listing-search" action="/vagas" method="get" role="search"><label for="listing-query">Pesquisar vagas e conteúdos</label><div><input id="listing-query" name="q" type="search" value="{{ query }}" placeholder="Ex.: área profissional, candidatura"><button class="button button-primary" type="submit"><i class="bi bi-search" aria-hidden="true"></i> Pesquisar</button></div></form>
-      <p class="search-status" aria-live="polite"></p>
-      <div id="vagas" class="section-heading listing-heading"><div><p class="eyebrow">Exemplos demonstrativos</p><h2>Vagas de emprego</h2></div></div>
-      <p class="demo-note"><i class="bi bi-info-circle" aria-hidden="true"></i> Não existem empresas ou vagas reais representadas neste protótipo. Confirme sempre a legitimidade de um anúncio antes de partilhar dados pessoais.</p>
+      <div id="vagas" class="section-heading listing-heading"><div><p class="eyebrow">Oportunidades</p><h2>Vagas de emprego</h2></div></div>
       <div class="job-list">
-        <article class="job-card searchable-card"><div class="job-card-heading"><span class="content-label">Exemplo demonstrativo</span><span class="job-type">A confirmar</span></div><h3>Assistente administrativo</h3><p class="job-company">Entidade empregadora: <strong>[Empresa a indicar]</strong></p><ul class="job-meta"><li><i class="bi bi-geo-alt" aria-hidden="true"></i> [Localização]</li><li><i class="bi bi-calendar3" aria-hidden="true"></i> Publicação: [data]</li><li><i class="bi bi-hourglass-split" aria-hidden="true"></i> Prazo: [a confirmar]</li></ul><a class="button button-outline" href="/artigo-exemplo">Como verificar um anúncio <i class="bi bi-arrow-right" aria-hidden="true"></i></a></article>
-        <article class="job-card searchable-card"><div class="job-card-heading"><span class="content-label">Exemplo demonstrativo</span><span class="job-type">A confirmar</span></div><h3>Técnico de contabilidade</h3><p class="job-company">Entidade empregadora: <strong>[Empresa a indicar]</strong></p><ul class="job-meta"><li><i class="bi bi-geo-alt" aria-hidden="true"></i> [Localização]</li><li><i class="bi bi-calendar3" aria-hidden="true"></i> Publicação: [data]</li><li><i class="bi bi-hourglass-split" aria-hidden="true"></i> Prazo: [a confirmar]</li></ul><a class="button button-outline" href="/artigo-exemplo">Como verificar um anúncio <i class="bi bi-arrow-right" aria-hidden="true"></i></a></article>
-        <article class="job-card searchable-card"><div class="job-card-heading"><span class="content-label">Exemplo demonstrativo</span><span class="job-type">A confirmar</span></div><h3>Técnico de suporte informático</h3><p class="job-company">Entidade empregadora: <strong>[Empresa a indicar]</strong></p><ul class="job-meta"><li><i class="bi bi-geo-alt" aria-hidden="true"></i> [Localização]</li><li><i class="bi bi-calendar3" aria-hidden="true"></i> Publicação: [data]</li><li><i class="bi bi-hourglass-split" aria-hidden="true"></i> Prazo: [a confirmar]</li></ul><a class="button button-outline" href="/artigo-exemplo">Como verificar um anúncio <i class="bi bi-arrow-right" aria-hidden="true"></i></a></article>
+        {% for job in jobs %}
+          <article class="job-card searchable-card">
+            <div class="job-card-heading"><span class="content-label">Vaga</span><span class="job-type">{{ job.employment_type or "Oportunidade" }}</span></div>
+            <h3>{{ job.title }}</h3><p class="job-company">Entidade empregadora: <strong>{{ job.company }}</strong></p>
+            <ul class="job-meta"><li><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ job.location }}</li><li><i class="bi bi-calendar3" aria-hidden="true"></i> Publicada: {{ job.created_at.strftime("%d/%m/%Y") }}</li>{% if job.deadline %}<li><i class="bi bi-hourglass-split" aria-hidden="true"></i> Prazo: {{ job.deadline.strftime("%d/%m/%Y") }}</li>{% endif %}</ul>
+            <div>{{ job.description }}</div>
+            {% if job.application_url %}<a class="button button-outline" href="{{ job.application_url }}" target="_blank" rel="noopener noreferrer">Candidatar-se <i class="bi bi-arrow-right" aria-hidden="true"></i></a>{% endif %}
+          </article>
+        {% else %}
+          <p class="empty-content">Não existem vagas publicadas que correspondam à pesquisa.</p>
+        {% endfor %}
       </div>
     </div></section>
     <section id="noticias" class="content-section section-soft"><div class="container">
       <div class="section-heading"><div><p class="eyebrow">Leitura editorial</p><h2>Notícias e orientação</h2></div></div>
       <div class="editorial-grid">
-        <article class="editorial-card searchable-card"><a class="card-image" href="/artigo-exemplo"><img src="/static/img/blog/blog-1.jpg" alt="Pessoa a organizar documentos de trabalho" loading="lazy"></a><div class="card-body"><span class="content-label">Artigo demonstrativo</span><h3><a href="/artigo-exemplo">Como avaliar uma oportunidade de emprego</a></h3><p>Questões úteis para confirmar a origem, os requisitos e as condições de um anúncio.</p><p class="article-date">Sem data editorial</p><a class="text-link" href="/artigo-exemplo">Ler artigo <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div></article>
-        <article class="editorial-card searchable-card"><a class="card-image" href="/tutoriais#candidatura"><img src="/static/img/blog/blog-2.jpg" alt="Computador portátil num espaço de trabalho" loading="lazy"></a><div class="card-body"><span class="content-label">Tutorial demonstrativo</span><h3><a href="/tutoriais#candidatura">Organizar os documentos para uma candidatura</a></h3><p>Uma estrutura simples para preparar e rever os ficheiros antes de os enviar.</p><p class="article-date">Sem data editorial</p><a class="text-link" href="/tutoriais#candidatura">Ler tutorial <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div></article>
-        <article class="editorial-card searchable-card"><a class="card-image" href="/tutoriais#entrevista"><img src="/static/img/blog/blog-3.jpg" alt="Sala preparada para uma conversa profissional" loading="lazy"></a><div class="card-body"><span class="content-label">Orientação demonstrativa</span><h3><a href="/tutoriais#entrevista">Preparar uma entrevista com confiança</a></h3><p>Como pesquisar a função, estruturar exemplos e preparar perguntas relevantes.</p><p class="article-date">Sem data editorial</p><a class="text-link" href="/tutoriais#entrevista">Ler guia <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div></article>
+        {% for article in articles %}
+          <article class="editorial-card searchable-card">
+            <a class="card-image" href="{{ url_for('main.article_detail', slug=article.slug) }}"><img src="{{ article.featured_image_url or '/static/img/post-landscape-5.jpg' }}" alt="{{ article.title }}" loading="lazy"></a>
+            <div class="card-body"><span class="content-label">Artigo</span><h3><a href="{{ url_for('main.article_detail', slug=article.slug) }}">{{ article.title }}</a></h3><p>{{ article.summary }}</p><p class="article-date">{{ article.created_at.strftime("%d/%m/%Y") }}</p><a class="text-link" href="{{ url_for('main.article_detail', slug=article.slug) }}">Ler artigo <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+          </article>
+        {% else %}
+          <p class="empty-content">Ainda não existem artigos publicados.</p>
+        {% endfor %}
       </div>
     </div></section>
   </main>
   <footer id="footer" class="footer"><div class="container footer-grid">
-    <div class="footer-about"><a href="/" class="footer-brand">Emprego Angola</a><p>Um portal independente de informação, emprego e orientação profissional para Angola.</p></div>
+    <div class="footer-about"><a href="/" class="footer-brand">{{ site_settings.site_name }}</a><p>{{ site_settings.about_text }}</p></div>
     <div class="footer-links"><h2>Explorar</h2><a href="#vagas">Vagas</a><a href="#noticias">Notícias</a><a href="/tutoriais">Tutoriais</a></div>
-    <div class="footer-links"><h2>Recursos</h2><a href="/sobre#modelos">Modelos de CV</a><a href="/sobre">Sobre o portal</a><a href="/sobre#privacidade">Privacidade</a></div>
-    <div class="footer-links"><h2>Contacto</h2><a href="/contacto">Fale connosco</a><span>Redes sociais: canais por anunciar</span></div>
-  </div><div class="container copyright"><span>© <span id="current-year">2026</span> Emprego Angola. Todos os direitos reservados.</span><span>Template ZenBlog por <a href="https://bootstrapmade.com/">BootstrapMade</a> · <a href="https://bootstrapmade.com/license/">Licença do template</a>.</span></div></footer>
+    <div class="footer-links"><h2>Recursos</h2><a href="/sobre#modelos">Modelos de CV</a><a href="/sobre">Sobre o portal</a></div>
+    <div class="footer-links"><h2>Contacto</h2><a href="/contacto">Fale connosco</a></div>
+  </div><div class="container copyright"><span>© <span id="current-year">2026</span> {{ site_settings.site_name }}. {{ site_settings.footer_note }}</span></div></footer>
   <a href="#conteudo" class="scroll-top" aria-label="Voltar ao início da página"><i class="bi bi-arrow-up" aria-hidden="true"></i></a>
   <script src="/static/js/main.js"></script>
 </body>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Conheça o propósito do Emprego Angola e descarregue um modelo editável de currículo.">
-  <title>Sobre e modelos de CV | Emprego Angola</title>
+  <meta name="description" content="{{ site_settings.about_text }}">
+  <title>Sobre e modelos de CV | {{ site_settings.site_name }}</title>
   <link rel="icon" href="/static/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -13,29 +13,31 @@
 <body class="portal-page">
   <a class="skip-link" href="#conteudo">Saltar para o conteúdo</a>
   <header id="header" class="header sticky-top"><div class="container header-inner">
-    <a href="/" class="logo" aria-label="Emprego Angola — página inicial"><span class="logo-mark" aria-hidden="true">EA</span><span class="logo-copy"><strong class="sitename">Emprego Angola</strong><small>Carreira e oportunidades</small></span></a>
-    <nav id="navmenu" class="navmenu" aria-label="Navegação principal"><ul><li><a href="/">Início</a></li><li><a href="#modelos" class="active" aria-current="page">Modelos de CV</a></li><li><a href="/vagas#vagas">Vagas</a></li><li><a href="/vagas#noticias">Notícias</a></li><li><a href="/tutoriais">Tutoriais</a></li><li><a href="/vagas#pesquisa">Pesquisa</a></li></ul></nav>
+    <a href="/" class="logo"><span class="logo-mark" aria-hidden="true">EA</span><span class="logo-copy"><strong class="sitename">{{ site_settings.site_name }}</strong><small>{{ site_settings.tagline }}</small></span></a>
+    <nav id="navmenu" class="navmenu" aria-label="Navegação principal"><ul><li><a href="/">Início</a></li><li><a href="#modelos" class="active" aria-current="page">Modelos de CV</a></li><li><a href="/vagas#vagas">Vagas</a></li><li><a href="/vagas#noticias">Notícias</a></li><li><a href="/tutoriais">Tutoriais</a></li></ul></nav>
     <form class="header-search" action="/vagas" method="get" role="search"><label class="visually-hidden" for="header-query">Pesquisar no portal</label><input id="header-query" name="q" type="search" placeholder="Pesquisar"><button type="submit" aria-label="Pesquisar"><i class="bi bi-search" aria-hidden="true"></i></button></form>
     <button class="theme-toggle" type="button" aria-label="Activar modo escuro" title="Modo escuro"><i class="bi bi-moon-stars" aria-hidden="true"></i></button>
     <button class="mobile-nav-toggle" type="button" aria-controls="navmenu" aria-expanded="false" aria-label="Abrir menu"><i class="bi bi-list" aria-hidden="true"></i></button>
   </div></header>
   <main id="conteudo" tabindex="-1">
-    <section class="page-intro"><div class="container"><p class="eyebrow">Sobre o portal</p><h1>Informação útil para decisões profissionais mais conscientes.</h1><p>O Emprego Angola é um espaço editorial independente em preparação, pensado para reunir oportunidades, notícias e ferramentas práticas de carreira.</p></div></section>
-    <section class="content-section"><div class="container about-grid">
-      <div><p class="eyebrow">O nosso propósito</p><h2>Orientação clara, recursos acessíveis.</h2><p>Queremos ajudar quem procura emprego ou pretende desenvolver a sua carreira, com conteúdos em português e foco nas necessidades de quem vive em Angola.</p><p>As publicações de demonstração deste template não representam empresas, anúncios ou dados de mercado reais. A informação será revista antes da publicação editorial.</p></div>
-      <img src="/static/img/about-company-1.jpg" alt="Equipa a conversar num espaço de trabalho" loading="lazy" width="700" height="560">
-    </div></section>
+    <section class="page-intro"><div class="container"><p class="eyebrow">Sobre o portal</p><h1>{{ site_settings.site_name }}</h1><p>{{ site_settings.about_text }}</p></div></section>
+    <section class="content-section"><div class="container about-grid"><div><p class="eyebrow">O nosso propósito</p><h2>{{ site_settings.tagline }}</h2><p>{{ site_settings.about_text }}</p></div><img src="/static/img/about-company-1.jpg" alt="{{ site_settings.site_name }}" loading="lazy" width="700" height="560"></div></section>
     <section id="modelos" class="content-section section-soft"><div class="container">
-      <div class="section-heading"><div><p class="eyebrow">Ferramentas gratuitas</p><h2>Modelos de currículo</h2></div></div>
-      <p class="section-lead">Use o ficheiro editável como ponto de partida. Substitua todos os campos de exemplo pelos seus dados e adapte o documento a cada candidatura.</p>
+      <div class="section-heading"><div><p class="eyebrow">Ferramentas</p><h2>Modelos de currículo</h2></div></div>
       <div class="cv-grid">
-        <article class="cv-card"><div class="cv-preview" aria-label="Pré-visualização de currículo simples"><div class="cv-preview-header"></div><div class="cv-preview-line wide"></div><div class="cv-preview-line"></div><div class="cv-preview-heading"></div><div class="cv-preview-line wide"></div><div class="cv-preview-line"></div><div class="cv-preview-heading"></div><div class="cv-preview-line wide"></div></div><div><span class="content-label">Modelo editável</span><h3>Currículo simples</h3><p>Formato HTML, editável no navegador ou num editor de texto e pronto a imprimir.</p><a class="button button-primary" href="/static/downloads/modelo-cv-base.html" download>Descarregar modelo <i class="bi bi-download" aria-hidden="true"></i></a></div></article>
+        {% for template in cv_templates %}
+          <article class="cv-card">
+            <div class="cv-preview" aria-label="Modelo de currículo"><div class="cv-preview-header"></div><div class="cv-preview-line wide"></div><div class="cv-preview-line"></div><div class="cv-preview-heading"></div><div class="cv-preview-line wide"></div><div class="cv-preview-line"></div></div>
+            <div><span class="content-label">{{ template.category.name }}</span><h3>{{ template.title }}</h3><p>{{ template.description }}</p><a class="button button-primary" href="{{ url_for('main.download_cv_template', template_id=template.id) }}">Descarregar modelo <i class="bi bi-download" aria-hidden="true"></i></a></div>
+          </article>
+        {% else %}
+          <p class="empty-content">Ainda não existem modelos de CV publicados.</p>
+        {% endfor %}
       </div>
-      <p class="demo-note"><i class="bi bi-shield-check" aria-hidden="true"></i> O modelo é uma estrutura em branco. Não inclua dados pessoais sensíveis que não sejam necessários para a candidatura.</p>
     </div></section>
-    <section id="privacidade" class="content-section"><div class="container privacy-copy"><p class="eyebrow">Privacidade</p><h2>Política de privacidade</h2><p>O formulário de contacto envia o nome, o email e a mensagem submetidos através do serviço Web3Forms para permitir o encaminhamento do contacto. Consulte a política de privacidade do serviço antes de enviar e não inclua dados pessoais sensíveis. Para questões sobre o contacto, use os canais indicados na <a href="/contacto">página de contacto</a>.</p></div></section>
+    <section id="privacidade" class="content-section"><div class="container privacy-copy"><p class="eyebrow">Privacidade</p><h2>Política de privacidade</h2><p>O formulário de contacto encaminha mensagens através do serviço Web3Forms. Não inclua dados pessoais sensíveis.</p></div></section>
   </main>
-  <footer id="footer" class="footer"><div class="container footer-grid"><div class="footer-about"><a href="/" class="footer-brand">Emprego Angola</a><p>Um portal independente de informação, emprego e orientação profissional para Angola.</p></div><div class="footer-links"><h2>Explorar</h2><a href="/vagas#vagas">Vagas</a><a href="/vagas#noticias">Notícias</a><a href="/tutoriais">Tutoriais</a></div><div class="footer-links"><h2>Recursos</h2><a href="#modelos">Modelos de CV</a><a href="#privacidade">Privacidade</a><a href="/sobre">Sobre o portal</a></div><div class="footer-links"><h2>Contacto</h2><a href="/contacto">Fale connosco</a><span>Redes sociais: canais por anunciar</span></div></div><div class="container copyright"><span>© <span id="current-year">2026</span> Emprego Angola. Todos os direitos reservados.</span><span>Template ZenBlog por <a href="https://bootstrapmade.com/">BootstrapMade</a> · <a href="https://bootstrapmade.com/license/">Licença do template</a>.</span></div></footer>
+  <footer id="footer" class="footer"><div class="container footer-grid"><div class="footer-about"><a href="/" class="footer-brand">{{ site_settings.site_name }}</a><p>{{ site_settings.about_text }}</p></div><div class="footer-links"><h2>Explorar</h2><a href="/vagas#vagas">Vagas</a><a href="/vagas#noticias">Notícias</a><a href="/tutoriais">Tutoriais</a></div><div class="footer-links"><h2>Recursos</h2><a href="#modelos">Modelos de CV</a><a href="#privacidade">Privacidade</a></div><div class="footer-links"><h2>Contacto</h2><a href="/contacto">Fale connosco</a></div></div><div class="container copyright"><span>© <span id="current-year">2026</span> {{ site_settings.site_name }}. {{ site_settings.footer_note }}</span></div></footer>
   <a href="#conteudo" class="scroll-top" aria-label="Voltar ao início da página"><i class="bi bi-arrow-up" aria-hidden="true"></i></a>
   <script src="/static/js/main.js"></script>
 </body>

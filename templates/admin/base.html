@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Painel administrativo de demonstração do portal Emprego Angola.">
-  <title>{{ page_title }} | Administração · Emprego Angola</title>
+  <meta name="description" content="Painel de gestão do portal {{ site_settings.site_name }}.">
+  <title>{{ page_title }} | Administração · {{ site_settings.site_name }}</title>
   <link rel="icon" href="/static/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,26 +16,31 @@
   <a class="admin-skip-link" href="#admin-main">Saltar para o conteúdo</a>
   <div class="admin-shell">
     <aside class="admin-sidebar" id="admin-sidebar" aria-label="Navegação administrativa">
-      <a class="admin-brand" href="/admin" aria-label="Emprego Angola — painel administrativo">
+      <a class="admin-brand" href="{{ url_for('admin.dashboard') }}" aria-label="{{ site_settings.site_name }} — painel administrativo">
         <span class="admin-brand-mark">EA</span>
-        <span><strong>Emprego Angola</strong><small>PAINEL ADMIN</small></span>
+        <span><strong>{{ site_settings.site_name }}</strong><small>PAINEL ADMIN</small></span>
       </a>
       <nav class="admin-nav">
         <span class="admin-nav-label">VISÃO GERAL</span>
-        <a class="admin-nav-link{% if active_page == 'dashboard' %} is-active{% endif %}" href="/admin"{% if active_page == 'dashboard' %} aria-current="page"{% endif %}><i class="bi bi-grid-1x2" aria-hidden="true"></i><span>Dashboard</span></a>
+        <a class="admin-nav-link{% if active_page == 'dashboard' %} is-active{% endif %}" href="{{ url_for('admin.dashboard') }}"{% if active_page == 'dashboard' %} aria-current="page"{% endif %}><i class="bi bi-grid-1x2" aria-hidden="true"></i><span>Dashboard</span></a>
 
         <span class="admin-nav-label">CONTEÚDOS</span>
-        <a class="admin-nav-link{% if active_page == 'artigos' %} is-active{% endif %}" href="/admin/artigos"{% if active_page == 'artigos' %} aria-current="page"{% endif %}><i class="bi bi-journal-richtext" aria-hidden="true"></i><span>Artigos e blog</span></a>
-        <a class="admin-nav-link{% if active_page == 'tutoriais' %} is-active{% endif %}" href="/admin/tutoriais"{% if active_page == 'tutoriais' %} aria-current="page"{% endif %}><i class="bi bi-lightbulb" aria-hidden="true"></i><span>Tutoriais</span></a>
-        <a class="admin-nav-link{% if active_page == 'modelos-cv' %} is-active{% endif %}" href="/admin/modelos-cv"{% if active_page == 'modelos-cv' %} aria-current="page"{% endif %}><i class="bi bi-file-earmark-person" aria-hidden="true"></i><span>Modelos de CV</span></a>
-        <a class="admin-nav-link{% if active_page == 'categorias' %} is-active{% endif %}" href="/admin/categorias"{% if active_page == 'categorias' %} aria-current="page"{% endif %}><i class="bi bi-tags" aria-hidden="true"></i><span>Categorias</span></a>
+        <a class="admin-nav-link{% if active_page == 'artigos' %} is-active{% endif %}" href="{{ url_for('admin.content_list', content_type='artigos') }}"{% if active_page == 'artigos' %} aria-current="page"{% endif %}><i class="bi bi-journal-richtext" aria-hidden="true"></i><span>Artigos e blog</span></a>
+        <a class="admin-nav-link{% if active_page == 'tutoriais' %} is-active{% endif %}" href="{{ url_for('admin.content_list', content_type='tutoriais') }}"{% if active_page == 'tutoriais' %} aria-current="page"{% endif %}><i class="bi bi-lightbulb" aria-hidden="true"></i><span>Tutoriais</span></a>
+        <a class="admin-nav-link{% if active_page == 'vagas' %} is-active{% endif %}" href="{{ url_for('admin.content_list', content_type='vagas') }}"{% if active_page == 'vagas' %} aria-current="page"{% endif %}><i class="bi bi-briefcase" aria-hidden="true"></i><span>Vagas</span></a>
+        <a class="admin-nav-link{% if active_page == 'modelos-cv' %} is-active{% endif %}" href="{{ url_for('admin.content_list', content_type='modelos-cv') }}"{% if active_page == 'modelos-cv' %} aria-current="page"{% endif %}><i class="bi bi-file-earmark-person" aria-hidden="true"></i><span>Modelos de CV</span></a>
+        <a class="admin-nav-link{% if active_page == 'categorias' %} is-active{% endif %}" href="{{ url_for('admin.content_list', content_type='categorias') }}"{% if active_page == 'categorias' %} aria-current="page"{% endif %}><i class="bi bi-tags" aria-hidden="true"></i><span>Categorias</span></a>
 
         <span class="admin-nav-label">SISTEMA</span>
-        <a class="admin-nav-link{% if active_page == 'configuracoes' %} is-active{% endif %}" href="/admin/configuracoes"{% if active_page == 'configuracoes' %} aria-current="page"{% endif %}><i class="bi bi-gear" aria-hidden="true"></i><span>Configurações</span></a>
+        <a class="admin-nav-link{% if active_page == 'configuracoes' %} is-active{% endif %}" href="{{ url_for('admin.settings') }}"{% if active_page == 'configuracoes' %} aria-current="page"{% endif %}><i class="bi bi-gear" aria-hidden="true"></i><span>Configurações</span></a>
       </nav>
       <div class="admin-sidebar-bottom">
-        <div class="admin-demo-profile"><span class="admin-avatar">EA</span><span><strong>Administrador</strong><small>Modo de demonstração</small></span></div>
+        <div class="admin-demo-profile"><span class="admin-avatar">EA</span><span><strong>{{ current_user.email }}</strong><small>Administrador</small></span></div>
         <a class="admin-site-link" href="/"><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Ver site público</a>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="admin-site-link" type="submit"><i class="bi bi-box-arrow-left" aria-hidden="true"></i> Terminar sessão</button>
+        </form>
       </div>
     </aside>
     <button class="admin-sidebar-overlay" type="button" aria-label="Fechar menu" data-close-sidebar hidden></button>
@@ -44,16 +49,20 @@
       <header class="admin-topbar">
         <div class="admin-topbar-start">
           <button class="admin-icon-button admin-menu-toggle" type="button" aria-label="Abrir menu administrativo" aria-controls="admin-sidebar" aria-expanded="false"><i class="bi bi-list" aria-hidden="true"></i></button>
-          <div class="admin-breadcrumb"><a href="/admin">Painel</a><i class="bi bi-chevron-right" aria-hidden="true"></i><span>{{ page_title }}</span></div>
+          <div class="admin-breadcrumb"><a href="{{ url_for('admin.dashboard') }}">Painel</a><i class="bi bi-chevron-right" aria-hidden="true"></i><span>{{ page_title }}</span></div>
         </div>
         <div class="admin-topbar-actions">
-          <span class="admin-demo-pill"><span></span> Demonstração</span>
+          <span class="admin-demo-pill"><span></span> Em produção</span>
           <a class="admin-icon-button admin-home-link" href="/" aria-label="Abrir site público" title="Abrir site público"><i class="bi bi-house" aria-hidden="true"></i></a>
           <span class="admin-topbar-avatar" aria-label="Administrador">EA</span>
         </div>
       </header>
       <main class="admin-content" id="admin-main" tabindex="-1">
-        <div class="admin-demo-notice"><i class="bi bi-info-circle" aria-hidden="true"></i><span><strong>Ambiente de demonstração.</strong> Não há autenticação nem dados guardados; as alterações são temporárias neste navegador.</span></div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+            <div class="admin-demo-notice" role="status"><i class="bi bi-info-circle" aria-hidden="true"></i><span>{{ message }}</span></div>
+          {% endfor %}
+        {% endwith %}
         {% block admin_content %}{% endblock %}
       </main>
     </div>

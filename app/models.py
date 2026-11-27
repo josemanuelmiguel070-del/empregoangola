@@ -3,6 +3,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from werkzeug.security import check_password_hash, generate_password_hash
 
 from .extensions import db
 
@@ -26,6 +27,12 @@ class AdminUser(UserMixin, db.Model):
     reset_tokens: Mapped[list["PasswordResetToken"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+
+    def set_password(self, password: str) -> None:
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password: str) -> bool:
+        return check_password_hash(self.password_hash, password)
 
 
 class PasswordResetToken(db.Model):
@@ -112,6 +119,29 @@ class CVTemplate(db.Model):
         nullable=False,
     )
     category: Mapped[Category] = relationship(back_populates="cv_templates")
+
+
+class Job(db.Model):
+    __tablename__ = "jobs"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    company: Mapped[str] = mapped_column(String(191), nullable=False)
+    location: Mapped[str] = mapped_column(String(191), nullable=False)
+    employment_type: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    application_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    deadline: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="draft", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.current_timestamp(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=func.current_timestamp(),
+        onupdate=func.current_timestamp(),
+        nullable=False,
+    )
 
 
 class SiteSettings(db.Model):

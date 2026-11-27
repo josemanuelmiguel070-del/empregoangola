@@ -8,70 +8,86 @@
 
   <section class="admin-panel admin-list-panel">
     <div class="admin-list-toolbar">
-      <div class="admin-list-count"><strong id="admin-record-count">{{ records|length }}</strong><span>registos de demonstração</span></div>
+      <div class="admin-list-count"><strong id="admin-record-count">{{ records|length }}</strong><span>registos</span></div>
       <label class="admin-search"><i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">Pesquisar nesta lista</span><input id="admin-list-search" type="search" placeholder="Pesquisar nesta lista..." autocomplete="off"></label>
     </div>
     <div class="admin-table-wrap">
-      <table class="admin-table admin-manage-table" id="admin-record-table" data-columns="{{ config.columns|tojson|forceescape }}">
-        <thead><tr>{% for column in config.columns %}<th>{{ column.label }}</th>{% endfor %}<th class="admin-actions-heading">Acções</th></tr></thead>
-        <tbody id="admin-record-rows">
+      <table class="admin-table admin-manage-table" id="admin-record-table">
+        <thead><tr>{% for key, label in config.columns %}<th>{{ label }}</th>{% endfor %}<th class="admin-actions-heading">Acções</th></tr></thead>
+        <tbody>
           {% for record in records %}
-            <tr data-id="{{ record.id }}" data-record="{{ record|tojson|forceescape }}">
-              {% for column in config.columns %}
+            <tr data-record-row>
+              {% for key, label in config.columns %}
                 <td>
-                  {% if column.key == "title" or column.key == "name" %}
-                    <span class="admin-cell-title">{{ record[column.key] }}</span>
-                    <span class="admin-cell-subtitle">{{ record.description or record.excerpt or record.category or record.slug }}</span>
-                  {% elif column.key == "status" %}
-                    <span class="admin-status status-{{ record[column.key]|lower|replace(' ', '-') }}">{{ record[column.key] }}</span>
+                  {% if key == "title" or key == "name" %}
+                    <span class="admin-cell-title">{{ record[key] }}</span>
+                    <span class="admin-cell-subtitle">{{ record.company or record.description or record.summary or record.slug or record.category or "" }}</span>
+                  {% elif key == "status_label" %}
+                    <span class="admin-status status-{{ record.status }}">{{ record[key] }}</span>
                   {% else %}
-                    {{ record[column.key] }}
+                    {{ record[key] }}
                   {% endif %}
                 </td>
               {% endfor %}
               <td class="admin-row-actions">
-                <button class="admin-icon-button" type="button" data-action="edit" data-id="{{ record.id }}" aria-label="Editar {{ record.title or record.name }}" title="Editar"><i class="bi bi-pencil" aria-hidden="true"></i></button>
-                <button class="admin-icon-button admin-icon-danger" type="button" data-action="delete" data-id="{{ record.id }}" aria-label="Remover {{ record.title or record.name }}" title="Remover"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                <a class="admin-icon-button" href="{{ url_for('admin.content_edit', content_type=content_type, record_id=record.id) }}" aria-label="Editar registo" title="Editar"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                <form method="post" action="{{ url_for('admin.content_delete', content_type=content_type, record_id=record.id) }}" onsubmit="return confirm('Apagar este registo? Esta acção não pode ser desfeita.');">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button class="admin-icon-button admin-icon-danger" type="submit" aria-label="Apagar registo" title="Apagar"><i class="bi bi-trash3" aria-hidden="true"></i></button>
+                </form>
               </td>
             </tr>
+          {% else %}
+            <tr><td colspan="{{ config.columns|length + 1 }}">Ainda não existem registos. Use “{{ config.new_label }}” para criar o primeiro.</td></tr>
           {% endfor %}
           <tr class="admin-empty-row" id="admin-empty-row" hidden><td colspan="{{ config.columns|length + 1 }}">Não foram encontrados registos para esta pesquisa.</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="admin-list-footnote"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Edições e remoções são temporárias e desaparecem ao recarregar a página.</p>
   </section>
 
-  <script type="application/json" id="admin-record-data">{{ records|tojson }}</script>
-
-  <section class="admin-modal" id="admin-record-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title" data-open="{{ 'true' if open_form else 'false' }}" data-initial-record="{{ initial_record|tojson|forceescape if initial_record else '' }}" hidden>
-    <div class="admin-modal-backdrop" data-close-modal></div>
-    <div class="admin-modal-dialog">
-      <div class="admin-modal-heading"><div><p class="admin-eyebrow">{{ config.eyebrow }}</p><h2 id="admin-modal-title">Adicionar conteúdo</h2></div><button class="admin-icon-button" type="button" data-close-modal aria-label="Fechar formulário"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>
-      <p class="admin-modal-intro">Preencha os campos. Nesta demonstração, os dados ficam apenas na memória desta página.</p>
-      <form class="admin-form-grid" id="admin-record-form" method="post">
-        <input type="hidden" name="id">
-        {% for field in config.fields %}
-          <div class="admin-form-field{% if field.type == 'editor' or field.type == 'textarea' %} field-span-full{% endif %}">
-            <label for="field-{{ field.name }}">{{ field.label }}{% if field.required %}<span aria-hidden="true"> *</span>{% endif %}</label>
-            {% if field.type == "select" %}
-              <select id="field-{{ field.name }}" name="{{ field.name }}"{% if field.required %} required{% endif %}>
-                <option value="">Seleccione uma categoria</option>
-                {% for category in categories %}<option value="{{ category }}">{{ category }}</option>{% endfor %}
-              </select>
-            {% elif field.type == "textarea" or field.type == "editor" %}
-              {% if field.type == "editor" %}<div class="admin-editor-toolbar" aria-label="Ferramentas do editor rico futuro"><button type="button" disabled aria-label="Negrito"><i class="bi bi-type-bold" aria-hidden="true"></i></button><button type="button" disabled aria-label="Itálico"><i class="bi bi-type-italic" aria-hidden="true"></i></button><button type="button" disabled aria-label="Lista"><i class="bi bi-list-ul" aria-hidden="true"></i></button><span>Editor rico a integrar</span></div>{% endif %}
-              <textarea id="field-{{ field.name }}" name="{{ field.name }}" rows="{{ field.rows or 4 }}" placeholder="{{ field.placeholder or '' }}"{% if field.required %} required{% endif %}></textarea>
-            {% elif field.type == "file" %}
-              <input id="field-{{ field.name }}" name="{{ field.name }}" type="file" accept="{{ field.accept }}">
-              <small class="admin-field-help" id="admin-file-name">Selecção visual apenas; o ficheiro não será enviado.</small>
-            {% else %}
-              <input id="field-{{ field.name }}" name="{{ field.name }}" type="{{ field.type }}" placeholder="{{ field.placeholder or '' }}"{% if field.required %} required{% endif %}>
-            {% endif %}
+  {% if open_form %}
+    {% set current = form_values if form_values else (initial_record or {}) %}
+    <section class="admin-modal" id="admin-record-modal" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+      <div class="admin-modal-backdrop"></div>
+      <div class="admin-modal-dialog">
+        <div class="admin-modal-heading">
+          <div><p class="admin-eyebrow">{{ config.eyebrow }}</p><h2 id="admin-modal-title">{{ "Editar registo" if initial_record else config.new_label }}</h2></div>
+          <a class="admin-icon-button" href="{{ url_for('admin.content_list', content_type=content_type) }}" aria-label="Fechar formulário"><i class="bi bi-x-lg" aria-hidden="true"></i></a>
+        </div>
+        <form class="admin-form-grid" method="post" action="{{ form_action }}" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          {% for field in config.fields %}
+            {% set value = current.get(field.name, "") %}
+            <div class="admin-form-field{% if field.type == 'textarea' %} field-span-full{% endif %}">
+              <label for="field-{{ field.name }}">{{ field.label }}{% if field.required %}<span aria-hidden="true"> *</span>{% endif %}</label>
+              {% if field.type == "category" %}
+                <select id="field-{{ field.name }}" name="{{ field.name }}" required>
+                  <option value="">Seleccione uma categoria</option>
+                  {% for category in categories %}<option value="{{ category.id }}"{% if value|string == category.id|string %} selected{% endif %}>{{ category.name }}</option>{% endfor %}
+                </select>
+                {% if not categories %}<small class="admin-field-help">Crie primeiro uma categoria.</small>{% endif %}
+              {% elif field.type == "status" %}
+                <select id="field-{{ field.name }}" name="{{ field.name }}" required>
+                  {% for option_value, label in status_options %}<option value="{{ option_value }}"{% if value == option_value or not value and option_value == "draft" %} selected{% endif %}>{{ label }}</option>{% endfor %}
+                </select>
+              {% elif field.type == "textarea" %}
+                <textarea id="field-{{ field.name }}" name="{{ field.name }}" rows="{{ field.rows or 4 }}"{% if field.required %} required{% endif %}>{{ value }}</textarea>
+              {% elif field.type == "file" %}
+                <input id="field-{{ field.name }}" name="{{ field.name }}" type="file" accept="{{ field.accept }}">
+                {% if initial_record and initial_record.file_path %}<small class="admin-field-help">Ficheiro actual: {{ initial_record.file_path }}. Seleccione outro apenas se o quiser substituir.</small>{% endif %}
+              {% else %}
+                <input id="field-{{ field.name }}" name="{{ field.name }}" type="{{ field.type }}" value="{{ value }}"{% if field.required %} required{% endif %}>
+              {% endif %}
+              {% if field.help %}<small class="admin-field-help">{{ field.help }}</small>{% endif %}
+            </div>
+          {% endfor %}
+          <div class="admin-form-actions field-span-full">
+            <a class="admin-button admin-button-secondary" href="{{ url_for('admin.content_list', content_type=content_type) }}">Cancelar</a>
+            <button class="admin-button admin-button-primary" type="submit"><i class="bi bi-check2" aria-hidden="true"></i> Guardar</button>
           </div>
-        {% endfor %}
-        <div class="admin-form-actions field-span-full"><button class="admin-button admin-button-secondary" type="button" data-close-modal>Cancelar</button><button class="admin-button admin-button-primary" type="submit"><i class="bi bi-check2" aria-hidden="true"></i> Guardar na demonstração</button></div>
-      </form>
-    </div>
-  </section>
+        </form>
+      </div>
+    </section>
+  {% endif %}
 {% endblock %}

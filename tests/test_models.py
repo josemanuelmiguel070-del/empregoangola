@@ -7,6 +7,7 @@ from unittest.mock import patch
 
 from sqlalchemy import inspect
 from sqlalchemy.schema import CreateTable
+from werkzeug.security import generate_password_hash
 
 from app import create_app, load_admin_user
 from app.extensions import db
@@ -15,6 +16,7 @@ from app.models import (
     Category,
     Content,
     CVTemplate,
+    Job,
     PasswordResetToken,
     SiteSettings,
 )
@@ -42,7 +44,11 @@ class ModelTests(unittest.TestCase):
         self.temp_directory.cleanup()
 
     def test_tables_and_model_relationships(self):
-        admin = AdminUser(email="admin@example.com", password_hash="hashed-password")
+        admin = AdminUser(email="admin@example.com", password_hash="")
+        admin.password_hash = generate_password_hash(
+            "hashed-password",
+            method="pbkdf2:sha256",
+        )
         token = PasswordResetToken(
             token_hash="hashed-token",
             expires_at=datetime(2030, 1, 1),
@@ -64,8 +70,14 @@ class ModelTests(unittest.TestCase):
             category=category,
             preview_url="/static/img/cv.jpg",
         )
+        job = Job(
+            title="Técnico",
+            company="Empresa",
+            location="Luanda",
+            description="Descrição da vaga",
+        )
         settings = SiteSettings(site_name="Emprego Angola")
-        db.session.add_all([admin, category, article, cv_template, settings])
+        db.session.add_all([admin, category, article, cv_template, job, settings])
         db.session.commit()
 
         self.assertEqual(
@@ -75,6 +87,7 @@ class ModelTests(unittest.TestCase):
                 "categories",
                 "content",
                 "cv_templates",
+                "jobs",
                 "password_reset_tokens",
                 "site_settings",
             },
@@ -85,6 +98,8 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(category.content_items, [article])
         self.assertEqual(category.cv_templates, [cv_template])
         self.assertEqual(settings.site_name, "Emprego Angola")
+        self.assertTrue(admin.check_password("hashed-password"))
+        self.assertFalse(admin.check_password("wrong-password"))
         self.assertEqual(admin.get_id(), str(admin.id))
         self.assertIs(load_admin_user(str(admin.id)), admin)
         self.assertIsNone(load_admin_user("invalid-id"))
@@ -116,6 +131,7 @@ class DatabaseConfigurationTests(unittest.TestCase):
                 Category,
                 Content,
                 CVTemplate,
+                Job,
                 PasswordResetToken,
                 SiteSettings,
             ):

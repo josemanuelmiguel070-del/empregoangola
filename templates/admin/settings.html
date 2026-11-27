@@ -2,37 +2,38 @@
 
 {% block admin_content %}
   <section class="admin-page-heading">
-    <div><p class="admin-eyebrow">Personalização</p><h1>Configurações do site</h1><p>Edite os textos institucionais e informações gerais num único lugar.</p></div>
+    <div><p class="admin-eyebrow">Personalização</p><h1>Configurações do site</h1><p>Edite os textos e contactos apresentados aos visitantes.</p></div>
   </section>
-  <form class="admin-settings-form" id="admin-settings-form">
+  <form class="admin-settings-form" id="admin-settings-form" method="post" action="{{ url_for('admin.settings') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <section class="admin-panel admin-settings-section">
-      <div class="admin-settings-heading"><span class="admin-settings-icon"><i class="bi bi-window" aria-hidden="true"></i></span><div><h2>Identidade e página inicial</h2><p>Informação geral apresentada aos visitantes.</p></div></div>
+      <div class="admin-settings-heading"><span class="admin-settings-icon"><i class="bi bi-window" aria-hidden="true"></i></span><div><h2>Identidade e página inicial</h2><p>Informação apresentada no portal.</p></div></div>
       <div class="admin-form-grid">
-        <div class="admin-form-field"><label for="site-name">Nome do site</label><input id="site-name" name="site_name" value="Emprego Angola"></div>
-        <div class="admin-form-field"><label for="site-tagline">Frase de apresentação</label><input id="site-tagline" name="tagline" value="Carreira e oportunidades"></div>
-        <div class="admin-form-field field-span-full"><label for="site-about">Texto institucional</label><textarea id="site-about" name="about" rows="3">Um portal independente de informação, emprego e orientação profissional para Angola.</textarea></div>
-        <div class="admin-form-field"><label for="hero-title">Título do banner</label><input id="hero-title" name="hero_title" value="O seu caminho profissional começa com informação."></div>
-        <div class="admin-form-field"><label for="hero-image">Imagem do banner (URL)</label><input id="hero-image" name="hero_image" type="url" value="/static/img/imagem_index.jpg"></div>
-        <div class="admin-form-field field-span-full"><label for="hero-description">Descrição do banner</label><textarea id="hero-description" name="hero_description" rows="3">Vagas, orientação e ferramentas úteis para procurar emprego e construir carreira em Angola.</textarea></div>
+        <div class="admin-form-field"><label for="site-name">Nome do site</label><input id="site-name" name="site_name" value="{{ settings.site_name }}" required></div>
+        <div class="admin-form-field"><label for="site-tagline">Frase de apresentação</label><input id="site-tagline" name="tagline" value="{{ settings.tagline or '' }}"></div>
+        <div class="admin-form-field field-span-full"><label for="site-about">Texto institucional</label><textarea id="site-about" name="about_text" rows="3">{{ settings.about_text or '' }}</textarea></div>
+        <div class="admin-form-field"><label for="hero-title">Título do banner</label><input id="hero-title" name="hero_title" value="{{ settings.hero_title or '' }}"></div>
+        <div class="admin-form-field"><label for="hero-image">Imagem do banner (URL)</label><input id="hero-image" name="hero_image_url" type="url" value="{{ settings.hero_image_url or '' }}"></div>
+        <div class="admin-form-field field-span-full"><label for="hero-description">Descrição do banner</label><textarea id="hero-description" name="hero_description" rows="3">{{ settings.hero_description or '' }}</textarea></div>
       </div>
     </section>
 
     <section class="admin-panel admin-settings-section">
-      <div class="admin-settings-heading"><span class="admin-settings-icon settings-icon-green"><i class="bi bi-telephone" aria-hidden="true"></i></span><div><h2>Contactos públicos</h2><p>Contactos apresentados na página de contacto e noutros elementos do site.</p></div></div>
+      <div class="admin-settings-heading"><span class="admin-settings-icon settings-icon-green"><i class="bi bi-telephone" aria-hidden="true"></i></span><div><h2>Contactos públicos</h2><p>Contactos apresentados no portal.</p></div></div>
       <div class="admin-form-grid">
-        <div class="admin-form-field"><label for="contact-email">Email de contacto</label><input id="contact-email" name="contact_email" type="email" value="josemanuelmiguel070@gmail.com"></div>
-        <div class="admin-form-field"><label for="contact-whatsapp">WhatsApp</label><input id="contact-whatsapp" name="contact_whatsapp" type="tel" value="+244 939 815 394"></div>
+        <div class="admin-form-field"><label for="contact-email">Email de contacto</label><input id="contact-email" name="contact_email" type="email" value="{{ settings.contact_email or '' }}"></div>
+        <div class="admin-form-field"><label for="contact-whatsapp">WhatsApp</label><input id="contact-whatsapp" name="contact_whatsapp" type="tel" value="{{ settings.contact_whatsapp or '' }}"></div>
       </div>
     </section>
 
     <section class="admin-panel admin-settings-section">
       <div class="admin-settings-heading"><span class="admin-settings-icon settings-icon-violet"><i class="bi bi-shield-check" aria-hidden="true"></i></span><div><h2>Informações gerais</h2><p>Preferências de apresentação e notas de rodapé.</p></div></div>
       <div class="admin-form-grid">
-        <div class="admin-form-field"><label for="footer-note">Nota no rodapé</label><input id="footer-note" name="footer_note" value="Todos os direitos reservados."></div>
-        <div class="admin-form-field"><label for="site-language">Idioma principal</label><select id="site-language" name="language"><option selected>Português</option><option>English</option></select></div>
+        <div class="admin-form-field"><label for="footer-note">Nota no rodapé</label><input id="footer-note" name="footer_note" value="{{ settings.footer_note or '' }}"></div>
+        <div class="admin-form-field"><label for="site-language">Idioma principal</label><select id="site-language" name="language"><option{% if settings.language == 'Português' %} selected{% endif %}>Português</option><option{% if settings.language == 'English' %} selected{% endif %}>English</option></select></div>
       </div>
     </section>
 
-    <div class="admin-settings-actions"><span><i class="bi bi-info-circle" aria-hidden="true"></i> Os valores são de demonstração e não alteram o site público.</span><button class="admin-button admin-button-primary" type="submit"><i class="bi bi-check2" aria-hidden="true"></i> Guardar na demonstração</button></div>
+    <div class="admin-settings-actions"><span><i class="bi bi-info-circle" aria-hidden="true"></i> As alterações são guardadas na base de dados.</span><button class="admin-button admin-button-primary" type="submit"><i class="bi bi-check2" aria-hidden="true"></i> Guardar alterações</button></div>
   </form>
 {% endblock %}
